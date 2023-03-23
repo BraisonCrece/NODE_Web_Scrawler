@@ -6,8 +6,12 @@ const normalizeURL = (url)=> {
   if(!url) {
     return url
   }
-  const urlObj = new URL(url)
-  return `${urlObj.host}${urlObj.pathname.toLowerCase()}`
+  try {
+    const urlObj = new URL(url)
+    return `${urlObj.host}${urlObj.pathname.toLowerCase()}`
+  } catch {
+    console.log('Something went wrong with the URL normalization');
+  }
 }
 
 const getURLsFromHTML = (htmlBody, baseURL) => {
@@ -19,27 +23,47 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
   return links.map(path => `${baseURL}${path}`)
 }
 
-const crawlPage = (base_url) => {
-  try{
-    fetch(base_url)
-    .then(response => {
-      if(!response.ok){
-        console.log(`Error: ${response.status}`)
-        return
-      }
-      if(!response.headers.get('content-type').startsWith('text/html')){
-        console.log('The page must return a text/html content type');
-        return
-      }
-      return response.text()
-    })
-    .then(htmlBody => {
-      console.log(htmlBody);
-    })
+const crawlPage = async (baseURL, currentURL, pages) => {
+  const baseUrlObj = new URL(baseURL)
+  const currentUrlObj = new URL(currentURL)
 
-  }catch(e){
-    console.log("oops, something went wrong :S");
+  if(baseUrlObj.hostname != currentUrlObj.hostname) {
+    return pages
   }
+
+  const normalizedCurrentUrl = normalizeURL(currentURL)
+
+  if(pages[normalizedCurrentUrl] > 0) {
+    pages[normalizedCurrentUrl]++
+    return pages
+  }
+
+  pages[normalizedCurrentUrl] = 1
+
+  console.log(`actively crawling: ${currentURL}`);
+
+  try{
+    const response = await fetch(currentURL)
+    if(!response.ok) {
+      console.log(`Error: ${response.status}`)
+      return pages
+    }
+    if(!response.headers.get('content-type').startsWith('text/html')) {
+      console.log('The page must have a text/html content type')
+      return pages
+    }
+
+    const htmlBody = await response.text()
+    const nextURLs =  getURLsFromHTML(htmlBody, baseURL)
+
+    for(const nextURL of nextURLs) {
+      pages = await crawlPage(baseURL, nextURL, pages)
+    }
+  }catch(err){
+    console.log(`oops, something went wrong. Error: ${err.message}`);
+  }
+
+  return pages
 }
 
 

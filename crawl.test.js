@@ -49,22 +49,25 @@ test('returns an Array of URL\'s', () => {
 // const json_url = 'https://jsonplaceholder.typicode.com/posts/1'
 
 // test('crawlPage should return the HTML body of a page', async () => {
-//   const htmlBody = crawlPage(base_url);
+//   const htmlBody = await crawlPage(base_url);
 //   expect(htmlBody).toBeDefined();
 // });
 
 // test('crawlPage should return an error message for non-200 response', async () => {
-//   const error = crawlPage(`${base_url}/error`);
-//   expect(error).toBe('Error: 404');
+//   console.log = jest.fn();
+//   await crawlPage(`https://winamax.es/jaja`);
+//   expect(console.log).toHaveBeenCalledWith('Error: 404');
 // });
 
 // test('crawlPage should return an error message for non-HTML content type', async () => {
-//   const error = crawlPage(json_url);
-//   expect(error).toBe('The page must return a text/html content type');
+//   console.log = jest.fn();
+//   await crawlPage(json_url);
+//   expect(console.log).toHaveBeenCalledWith('The page must have a text/html content type');
 // });
 
-// test('crawlPage should handle network errors', async () => {
-//   const error = crawlPage('https://google.com/thishsoudfail');
-//   expect(error).toBe('oops, something went wrong :S');
-// });
+// test('logs error message on invalid URL', async () => {
+//   console.log = jest.fn();
+//   await crawlPage('');
+//   expect(console.log).toHaveBeenCalledWith('oops, something went wrong :S');
+//   });
 
