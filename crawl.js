@@ -19,11 +19,34 @@ const getURLsFromHTML = (htmlBody, baseURL) => {
   return links.map(path => `${baseURL}${path}`)
 }
 
+const crawlPage = (base_url) => {
+  try{
+    fetch(base_url)
+    .then(response => {
+      if(!response.ok){
+        console.log(`Error: ${response.status}`)
+        return
+      }
+      if(!response.headers.get('content-type').startsWith('text/html')){
+        console.log('The page must return a text/html content type');
+        return
+      }
+      return response.text()
+    })
+    .then(htmlBody => {
+      console.log(htmlBody);
+    })
+
+  }catch(e){
+    console.log("oops, something went wrong :S");
+  }
+}
 
 
 
 
   module.exports = {
     normalizeURL,
-    getURLsFromHTML
+    getURLsFromHTML,
+    crawlPage
   }

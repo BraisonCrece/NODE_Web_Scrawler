@@ -1,5 +1,5 @@
 const { test, expect } = require('@jest/globals')
-const { normalizeURL, getURLsFromHTML } = require('./crawl.js')
+const { normalizeURL, getURLsFromHTML, crawlPage } = require('./crawl.js')
 
 
 // normalizeURL Tests
@@ -41,3 +41,30 @@ test('returns null if any of the parameters are null', () => {
 test('returns an Array of URL\'s', () => {
   expect(getURLsFromHTML(htmlBody, baseURL)).toEqual([ 'banji.fly.dev/12', 'banji.fly.dev/24' ]);
 })
+
+
+
+// crawlPage Tests
+// const base_url = 'https://banji.fly.dev'
+// const json_url = 'https://jsonplaceholder.typicode.com/posts/1'
+
+// test('crawlPage should return the HTML body of a page', async () => {
+//   const htmlBody = crawlPage(base_url);
+//   expect(htmlBody).toBeDefined();
+// });
+
+// test('crawlPage should return an error message for non-200 response', async () => {
+//   const error = crawlPage(`${base_url}/error`);
+//   expect(error).toBe('Error: 404');
+// });
+
+// test('crawlPage should return an error message for non-HTML content type', async () => {
+//   const error = crawlPage(json_url);
+//   expect(error).toBe('The page must return a text/html content type');
+// });
+
+// test('crawlPage should handle network errors', async () => {
+//   const error = crawlPage('https://google.com/thishsoudfail');
+//   expect(error).toBe('oops, something went wrong :S');
+// });
+
