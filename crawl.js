@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { JSDOM } = require('jsdom')
 const jsdom = require('jsdom');
+const colors = require('colors/safe');
 
 const normalizeURL = (url)=> {
   if(!url) {
@@ -10,7 +11,7 @@ const normalizeURL = (url)=> {
     const urlObj = new URL(url)
     return `${urlObj.host}${urlObj.pathname.toLowerCase()}`
   } catch {
-    console.log('Something went wrong with the URL normalization');
+    console.log(colors.red('Something went wrong with the'), colors.blue('URL normalization'));
   }
 }
 
@@ -40,7 +41,7 @@ const crawlPage = async (baseURL, currentURL, pages) => {
 
   pages[normalizedCurrentUrl] = 1
 
-  console.log(`actively crawling: ${currentURL}`);
+  console.log(colors.blue('-> '), colors.yellow(`actively crawling:`), colors.green(`${currentURL}`));
 
   try{
     const response = await fetch(currentURL)
@@ -49,7 +50,7 @@ const crawlPage = async (baseURL, currentURL, pages) => {
       return pages
     }
     if(!response.headers.get('content-type').startsWith('text/html')) {
-      console.log('The page must have a text/html content type')
+      console.log(colors.blue('-> '),colors.red('ERROR: The page must have a'), colors.blue('text/html'), colors.red('content type'))
       return pages
     }
 
@@ -60,7 +61,7 @@ const crawlPage = async (baseURL, currentURL, pages) => {
       pages = await crawlPage(baseURL, nextURL, pages)
     }
   }catch(err){
-    console.log(`oops, something went wrong. Error: ${err.message}`);
+    console.log(colors.red(`oops, something went wrong. Error:`), colors.blue(` ${err.message}`))
   }
 
   return pages
